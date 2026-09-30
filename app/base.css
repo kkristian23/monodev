@@ -46,3 +46,11 @@
 
 /* Content-managed prices and image slots preserve the existing page geometry. */
 .catalog-price{display:inline-flex;align-items:baseline;gap:.35em;flex-wrap:wrap}.catalog-price del{font-size:.62em;color:#73786c;font-weight:400}.catalog-price-reduced{color:#5940ba}.cms-media{display:block}.cms-media:empty{min-height:0}.cms-media>img{display:block;max-width:100%;height:auto}.cms-media>img+img{margin-top:20px}.cms-card-cover{width:100%;height:100%;position:absolute;inset:0}.cms-card-cover>img{width:100%;height:100%;object-fit:cover}.cms-image-empty{display:block;min-height:120px;background:#e8e9e2}
+
+/* Keep the wordmark together with its centered service tagline below. */
+.brand-logo.brand-logo{display:inline-grid;grid-template-columns:auto auto;justify-content:center;row-gap:4px;width:max-content}
+.brand-logo>.brand-logo-tagline{grid-column:1 / -1;justify-self:center;color:var(--brand-logo-mono);font:700 7px/1.3 var(--font-geist),sans-serif;letter-spacing:.08em;white-space:nowrap}
+.brand-logo>.logo-mono{justify-self:end}
+.brand-logo>.logo-dev{justify-self:start}
+.brand-logo.brand-logo{font-size:26px}
+@media(max-width:800px){.brand-logo.brand-logo{font-size:23px}}

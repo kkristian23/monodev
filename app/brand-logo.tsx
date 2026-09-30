@@ -23,6 +23,7 @@ export function BrandLogo({
     <a className={classes} href={href} aria-label={ariaLabel}>
       <span className="logo-mono" aria-hidden="true">{cmsText("brand-logo", "literal-d7de34b17b4691aa", "mono")}</span>
       <span className="logo-dev" aria-hidden="true">{cmsText("brand-logo", "literal-938b99e3330802a9", "dev")}</span>
+      <small className="brand-logo-tagline">WEB · APLICAȚII · AUTOMATIZĂRI</small>
     </a>
   );
 }
