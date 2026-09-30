@@ -1898,22 +1898,6 @@ export default function Home({ initialLocale = "ro" }: { initialLocale?: Locale 
                     </ul>
                   </div>}
                 </aside>
-                <p className="modal-summary">{selectedDetail.summary}</p>
-                <div className="detail-sections" aria-label={locale === "ro" ? cmsText("home-client", "literal-9882686a75fa8d6c", "Ce primești") : locale === "ru" ? cmsText("home-client", "literal-f1cfb2b145a7be01", "Что входит") : cmsText("home-client", "literal-06cec1523c69f02c", "What is included")}>
-                  {selectedDetail.sections.map((section) => (
-                    <section key={section.title}>
-                      <h3>{section.title}</h3>
-                      <ul>
-                        {section.items.map((item) => (
-                          <li key={item}>
-                            <Check />
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </section>
-                  ))}
-                </div>
                 <div className="modal-actions">
                   {unavailableProjectIds.has(selected.id) ? (
                     <button
@@ -1954,6 +1938,22 @@ export default function Home({ initialLocale = "ro" }: { initialLocale?: Locale 
                   <a className="rent-link" href={paymentHref} data-analytics-event="payment_option" data-project={projectSlugs[selected.id]} data-option={paymentMode}>
                     <span>{paymentMode === "installments" ? `${locale === "ro" ? cmsText("home-client", "literal-fa4bd2bb877cb496", "Cumpără în rate la") : locale === "ru" ? cmsText("home-client", "literal-7c562ae69ba6c7dd", "Купить в рассрочку от") : cmsText("home-client", "literal-86de4377c6aa39bf", "Buy in installments from")} €${installmentPriceLabel}` : `${c.rentFor} ${rentalMonthlyPriceLabel}`}<small>{c.perMonth}</small></span> <ArrowRight />
                   </a>
+                </div>
+                <p className="modal-summary">{selectedDetail.summary}</p>
+                <div className="detail-sections" aria-label={locale === "ro" ? cmsText("home-client", "literal-9882686a75fa8d6c", "Ce primești") : locale === "ru" ? cmsText("home-client", "literal-f1cfb2b145a7be01", "Что входит") : cmsText("home-client", "literal-06cec1523c69f02c", "What is included")}>
+                  {selectedDetail.sections.map((section) => (
+                    <section key={section.title}>
+                      <h3>{section.title}</h3>
+                      <ul>
+                        {section.items.map((item) => (
+                          <li key={item}>
+                            <Check />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  ))}
                 </div>
               </div>
             </motion.div>
