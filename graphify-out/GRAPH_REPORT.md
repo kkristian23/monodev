@@ -1,7 +1,7 @@
 # Graph Report - vanzare proiecte  (2026-09-30)
 
 ## Corpus Check
-- 230 files · ~4,232,584 words
+- 230 files · ~4,232,618 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `4c81618a`
+- Built from commit: `d3bf9ca6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -158,16 +158,16 @@
 10. `n()` - 27 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `AutoFitProjectTitle()` --calls--> `useCms()`  [EXTRACTED]
-  app/home-client.tsx → app/components/cms-live.tsx
+- `GET()` --calls--> `getDb()`  [EXTRACTED]
+  examples/d1/app/api/notes/route.ts → db/index.ts
+- `POST()` --calls--> `getDb()`  [EXTRACTED]
+  examples/d1/app/api/notes/route.ts → db/index.ts
 - `indexablePaths()` --indirect_call--> `isProjectSeoEnabled()`  [INFERRED]
   app/lib/seo-routes.ts → app/lib/project-seo.ts
 - `useCms()` --indirect_call--> `getCmsSnapshot()`  [INFERRED]
   app/components/cms-live.tsx → app/lib/cms-store.ts
 - `useCms()` --indirect_call--> `subscribeCms()`  [INFERRED]
   app/components/cms-live.tsx → app/lib/cms-store.ts
-- `GET()` --calls--> `getDb()`  [EXTRACTED]
-  examples/d1/app/api/notes/route.ts → db/index.ts
 
 ## Import Cycles
 - None detected.
@@ -519,35 +519,35 @@ Cohesion: 0.14
 Nodes (13): catalogPath, catalogRoot, configs, folders, known, pagePath, pathEntries, priceByDomain (+5 more)
 
 ## Knowledge Gaps
-- **616 isolated node(s):** `BrandLogoProps`, `platformCopy`, `gamesPlatformCopy`, `filters`, `cleanFilterCopy` (+611 more)
+- **616 isolated node(s):** `BrandLogoProps`, `GardenCopy`, `GardenDetail`, `GardenProject`, `Service` (+611 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **43 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Work-memory lessons
 
 **Preferred sources** — corroborated by past sessions; start here.
-- `Admin()` (3× useful, score=2.373513268)
-- `paymentSettings` (2× useful, score=1.582965416)
-- `home-client.tsx` (2× useful, score=1.582345195) _(code changed — re-verify)_
-- `ProjectVisual()` (2× useful, score=1.548700446) _(code changed — re-verify)_
-- `i18n.ts` (2× useful, score=1.431882837)
-- `sync-showcase.mjs` (2× useful, score=1.411112711)
-- `projectSlugs` (2× useful, score=1.316269117)
+- `Admin()` (3× useful, score=1.927981217)
+- `paymentSettings` (2× useful, score=1.28582706)
+- `home-client.tsx` (2× useful, score=1.285323262)
+- `ProjectVisual()` (2× useful, score=1.257993967)
+- `i18n.ts` (2× useful, score=1.163104185)
+- `sync-showcase.mjs` (2× useful, score=1.146232818)
+- `projectSlugs` (2× useful, score=1.06919231)
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `qd()` connect `qd` to `e`, `Pa`, `Nd`, `rl`, `index-CKwsJXdb.js`, `ar`, `h`, `js`, `Bd`, `c0`, `Ud`, `zr`?**
-  _High betweenness centrality (0.044) - this node is a cross-community bridge._
-- **Why does `useCms()` connect `useCms` to `cms-store.ts`, `admin-client.tsx`, `cms-live.tsx`, `site-config.ts`, `cmsContent`, `home-client.tsx`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
-- **Why does `isLocale()` connect `site-config.ts` to `project-seo.ts`, `cmsContent`, `cms-live.tsx`, `trustMetadata`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
+  _High betweenness centrality (0.066) - this node is a cross-community bridge._
+- **Why does `Nd()` connect `Nd` to `e`, `index-CKwsJXdb.js`, `h`, `e1`, `Ud`?**
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+- **Why does `cmsContent()` connect `cmsContent` to `cms-store.ts`, `project-seo.ts`, `useCms`, `garden-projects.ts`, `cms-live.tsx`, `site-config.ts`, `home-client.tsx`?**
+  _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **Are the 20 inferred relationships involving `qd()` (e.g. with `ad()` and `cd()`) actually correct?**
   _`qd()` has 20 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 18 inferred relationships involving `e()` (e.g. with `ao()` and `ci()`) actually correct?**
   _`e()` has 18 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 5 inferred relationships involving `zr()` (e.g. with `A0()` and `a()`) actually correct?**
   _`zr()` has 5 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `BrandLogoProps`, `platformCopy`, `gamesPlatformCopy` to the rest of the system?**
+- **What connects `BrandLogoProps`, `GardenCopy`, `GardenDetail` to the rest of the system?**
   _616 weakly-connected nodes found - possible documentation gaps or missing edges._

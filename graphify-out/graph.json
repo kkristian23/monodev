@@ -19710,7 +19710,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "app/brand-logo.tsx",
-      "source_location": "L24",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -58018,5 +58018,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "4c81618ab978e95ef68bce042c9c88f043c9689e"
+  "built_at_commit": "d3bf9ca6076502e6cc24d3eb091205d1681f9e87"
 }
