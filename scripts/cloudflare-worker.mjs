@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -24,6 +24,23 @@ try {
 if (config.legacy_env === true) {
   delete config.legacy_env;
   await writeFile(configPath, `${JSON.stringify(config)}\n`);
+}
+
+const assetsDirectory = path.resolve(path.dirname(configPath), config.assets?.directory ?? "../client");
+const headerPath = path.join(assetsDirectory, "_headers");
+const headers = await readFile(headerPath, "utf8");
+const headerRules = headers.split(/\r?\n/).filter((line) => line.length > 0 && !line.startsWith("#") && !/^\s/.test(line));
+console.log(`Static asset _headers: ${headerRules.length} / 100 rules; ${ (await stat(headerPath)).size } bytes.`);
+if (headerRules.length > 100) {
+  throw new Error("Cloudflare allows at most 100 rules in a static asset _headers file.");
+}
+
+const redirectsPath = path.join(assetsDirectory, "_redirects");
+const redirects = await readFile(redirectsPath, "utf8");
+const redirectRules = redirects.split(/\r?\n/).filter((line) => line.trim().length > 0 && !line.trimStart().startsWith("#"));
+console.log(`Static asset _redirects: ${redirectRules.length} / 2100 rules.`);
+if (redirectRules.length > 2100) {
+  throw new Error("Cloudflare allows at most 2100 rules in a static asset _redirects file.");
 }
 
 const args = [wranglerPath, "deploy", "--config", configPath];

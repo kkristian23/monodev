@@ -269,7 +269,7 @@ export async function auditSeo({ root = process.cwd(), buildDirectory = "dist/cl
   const htmlPaths = await demoHtmlPaths(root, directories);
   const payloadPaths = await technicalPayloadPaths(root);
   const expectedHeaders = renderHeaders(htmlPaths, payloadPaths, noindexProjectPaths(catalog.publicProjects));
-  const demoMeta = { html: 0, explicitNoindex: 0, headerOnly: 0 };
+  const demoMeta = { html: 0, explicitNoindex: 0, missingNoindex: 0 };
   for (const pathname of htmlPaths.filter(pathname => pathname.endsWith(".html"))) {
     const filename = await exportedFile(buildRoot, pathname);
     check(Boolean(filename), `Demo HTML missing: ${pathname}`);
@@ -278,9 +278,9 @@ export async function auditSeo({ root = process.cwd(), buildDirectory = "dist/cl
     const tags = html.match(/<meta\b[^>]*>/gi) ?? [];
     const robots = tags.filter(tag => /name\s*=\s*["'](?:robots|googlebot)["']/i.test(tag)).map(tag => tag.match(/content\s*=\s*["']([^"']*)/i)?.[1] ?? "");
     demoMeta.html++;
-    if (robots.some(value => /\bnoindex\b/i.test(value))) demoMeta.explicitNoindex++; else demoMeta.headerOnly++;
-    check(!robots.some(value => /(?:^|[,\s])(?:index|all)(?:$|[,\s])/i.test(value)), `${pathname}: demo meta contradicts noindex header`);
-    check(expectedHeaders.includes(`${pathname}\n  X-Robots-Tag: noindex, follow`), `${pathname}: demo lacks noindex header`);
+    if (robots.some(value => /\bnoindex\b/i.test(value))) demoMeta.explicitNoindex++; else demoMeta.missingNoindex++;
+    check(robots.some(value => /\bnoindex\b/i.test(value)), `${pathname}: demo lacks a noindex directive`);
+    check(!robots.some(value => /(?:^|[,\s])(?:index|all)(?:$|[,\s])/i.test(value)), `${pathname}: demo meta contradicts noindex policy`);
   }
   check(htmlPaths.every((pathname) => !/\.(?:webp|png|jpe?g|avif|gif|svg|css|m?js)$/i.test(pathname)), "Demo noindex must not cover images, CSS or JavaScript");
   const expectedRedirects = renderRedirects(legacyRedirectRules({ origin: ORIGIN, locales: LOCALES, projects: catalog.publicProjects, slugs: catalog.projectSlugs }));

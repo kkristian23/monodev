@@ -29,11 +29,13 @@ npm run build
 ## Cloudflare Worker
 
 Cloudflare builds this project with `npm run build`. To verify the generated
-Worker config and bundle before publishing, run `npm run check:cloudflare`;
+Worker config, metadata and static asset rules before publishing, run `npm run check:cloudflare`;
 then use `npm run deploy:cloudflare` to publish. The script deploys the config
 generated at `dist/server/wrangler.json` and removes its obsolete `legacy_env`
-field before invoking Wrangler 4.146. The local check reports the request
-metadata size separately from the static asset count; it does not publish.
+field before invoking Wrangler 4.146. It also checks Cloudflare's 100-rule
+limit for `_headers`; generated demo HTML keeps its robots directives in the
+documents, so the shared headers file stays small. The local check does not
+publish.
 
 This starter does not use `wrangler.jsonc`.
 
