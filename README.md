@@ -37,6 +37,13 @@ limit for `_headers`; generated demo HTML keeps its robots directives in the
 documents, so the shared headers file stays small. The local check does not
 publish.
 
+The build generates provider-specific `_redirects`: Cloudflare uses the Worker
+for legacy query URLs and canonical-host redirects; Netlify builds (`NETLIFY=true`)
+retain Netlify's query conditions and forced redirect syntax. Do not copy a
+Netlify `_redirects` file into a Cloudflare deployment. The Cloudflare check rejects
+stale or incompatible output before uploading assets. `assets.run_worker_first`
+ensures the Worker applies redirects before serving static files.
+
 This starter does not use `wrangler.jsonc`.
 
 ## Included Shape

@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { renderRedirects } from "./netlify-seo.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const configPath = path.join(root, "dist", "server", "wrangler.json");
@@ -37,11 +38,16 @@ if (headerRules.length > 100) {
 
 const redirectsPath = path.join(assetsDirectory, "_redirects");
 const redirects = await readFile(redirectsPath, "utf8");
-const redirectRules = redirects.split(/\r?\n/).filter((line) => line.trim().length > 0 && !line.trimStart().startsWith("#"));
-console.log(`Static asset _redirects: ${redirectRules.length} / 2100 rules.`);
-if (redirectRules.length > 2100) {
-  throw new Error("Cloudflare allows at most 2100 rules in a static asset _redirects file.");
+// This deployment uses Worker code for all legacy/host redirects. Requiring
+// the generated Cloudflare file catches stale Netlify output before any upload;
+// Wrangler dry-run alone does not validate the remote asset configuration.
+if (redirects.replaceAll("\r\n", "\n") !== renderRedirects([], "cloudflare")) {
+  throw new Error("Invalid or stale Cloudflare _redirects. Rebuild with npm run build outside Netlify (NETLIFY must not be true). Query conditions, 301! and host rules belong in Worker code, not Cloudflare _redirects.");
 }
+if (config.assets?.run_worker_first !== true) {
+  throw new Error("Cloudflare assets.run_worker_first must be true so legacy and canonical-host redirects run before static assets. Run npm run build with the current vite.config.ts.");
+}
+console.log("Static asset _redirects: valid Cloudflare output; redirects handled by Worker.");
 
 const args = [wranglerPath, "deploy", "--config", configPath];
 const runtimeDirectory = path.join(root, ".runtime");

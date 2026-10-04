@@ -1,6 +1,7 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import { legacyRedirect } from "./legacy-redirects";
 
 interface Env {
   ASSETS: Fetcher;
@@ -27,6 +28,8 @@ interface ExecutionContext {
 
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const redirect = legacyRedirect(request);
+    if (redirect) return redirect;
     const url = new URL(request.url);
 
     if (url.pathname === "/_vinext/image") {
@@ -38,6 +41,14 @@ const worker = {
           return result.response();
         },
       }, allowedWidths);
+    }
+
+    // Worker-first routing lets redirects run even when an exported HTML file
+    // exists. Retain the previous static-first serving order after redirects.
+    // Vinext's Node prerenderer invokes this entry without Cloudflare bindings.
+    if (env?.ASSETS && (request.method === "GET" || request.method === "HEAD")) {
+      const asset = await env.ASSETS.fetch(request);
+      if (asset.status !== 404) return asset;
     }
 
     return handler.fetch(request, env, ctx);
