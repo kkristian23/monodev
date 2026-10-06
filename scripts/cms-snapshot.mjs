@@ -1,11 +1,13 @@
 import { readFile, writeFile, rename } from "node:fs/promises";
 import { parseEnv } from "node:util";
+import { resolveFirebaseConfig } from "../app/lib/firebase-config.mjs";
 const env = {
   ...parseEnv(await readFile(".env", "utf8").catch(() => "")),
   ...parseEnv(await readFile(".env.local", "utf8").catch(() => "")),
   ...process.env,
 };
-const projectId = env.VITE_FIREBASE_PROJECT_ID;
+const config = resolveFirebaseConfig(env);
+const projectId = config.projectId;
 const siteScope = "monodev-catalog";
 const snapshot = {};
 function decode(value) {
@@ -31,8 +33,8 @@ if (projectId && env.VITE_FIREBASE_EMULATORS !== "true") {
       `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/databases/(default)/documents/cms`,
     );
     url.searchParams.set("pageSize", "300");
-    if (env.VITE_FIREBASE_API_KEY)
-      url.searchParams.set("key", env.VITE_FIREBASE_API_KEY);
+    if (config.apiKey)
+      url.searchParams.set("key", config.apiKey);
     if (pageToken) url.searchParams.set("pageToken", pageToken);
     // Only the public collection is read, without Admin credentials or an authorization token.
     const response = await fetch(url, { signal: AbortSignal.timeout(20000) });

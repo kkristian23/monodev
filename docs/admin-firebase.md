@@ -4,6 +4,13 @@ Panoul este la `/admin`, în română, și administrează exclusiv conținutul a
 
 ## Configurare pentru producție
 
+Configurația Web publică pentru proiectul principal `mono-b5784` este inclusă în
+`app/lib/firebase-config.json`. Clientul și snapshot-ul CMS o folosesc automat,
+inclusiv la build pe Cloudflare fără `.env.local`. Variabilele `VITE_FIREBASE_*`
+pot suprascrie configurația. Pentru alt `VITE_FIREBASE_PROJECT_ID`, completează
+toată configurația Web: cheile și resursele proiectului principal nu sunt moștenite.
+Acest fișier conține numai identificatori Web publici, fără credențiale Admin.
+
 1. Creează sau selectează proiectul Firebase destinat **monodev.md** și înregistrează o aplicație Web. Activează Authentication → Email/Password, Cloud Firestore în modul Native (baza `(default)`) și Storage. În funcție de configurația proiectului, activarea Storage poate solicita facturare. Folosește resursele proiectului principal, nu configurațiile din aplicațiile demonstrative din `public/`.
 2. Adaugă `monodev.md` și domeniile de previzualizare folosite în Authentication → Settings → Authorized domains.
 3. Completează variabilele `VITE_FIREBASE_*` din [.env.example](../.env.example), într-un `.env.local` pentru dezvoltare și în variabilele de build Netlify pentru producție. Configurația Web este publică. **Nu pune chei private, conturi de serviciu sau parole în variabile `VITE_*`, `NEXT_PUBLIC_*`, în `app/` ori în `public/`.** `VITE_FIREBASE_EMULATORS` trebuie să fie `false` în producție.

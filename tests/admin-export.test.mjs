@@ -8,7 +8,7 @@ test("static /admin supports direct access and reload, and is excluded from inde
   const sitemap = await readFile("dist/client/sitemap.xml", "utf8");
   const headers = await readFile("dist/client/_headers", "utf8");
   assert.doesNotMatch(sitemap, /<loc>[^<]*\/admin(?:\/|<)/);
-  assert.match(headers, /\/admin\n\s+X-Robots-Tag: noindex, nofollow/);
+  assert.match(headers, /\/admin\*?\n\s+X-Robots-Tag: noindex, nofollow/);
   const server = spawn(process.execPath, ["scripts/serve-seo.mjs"], { env: { ...process.env, SEO_PREVIEW_PORT: "4021" }, stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
   let browser;
   try {
@@ -19,6 +19,9 @@ test("static /admin supports direct access and reload, and is excluded from inde
     assert.equal(response.status(), 200);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
     await expect(page.getByRole("heading", { name: "Autentificare", exact: true })).toBeVisible();
+    await expect(page.getByText("Conexiunea Firebase nu este configurată.", { exact: false })).toHaveCount(0);
+    await expect(page.locator('input[type="email"]')).toBeEnabled();
+    await expect(page.locator('button[type="submit"]')).toBeEnabled();
     const reload = await page.reload();
     assert.equal(reload.status(), 200);
     await expect(page.getByRole("heading", { name: "Autentificare", exact: true })).toBeVisible();
