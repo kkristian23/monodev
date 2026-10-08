@@ -55,7 +55,7 @@
       "literal-143424d04ea8d7c1": "9K",
       "literal-a318c24216defe20": "+",
       "literal-1a259dba25660062": "NEO",
-      "literal-17ab25fce35797b2": "BARBER CLUB",
+      "literal-17ab25fce35797b2": "BARBE CLUB",
       "literal-7d60c737e1af6e4e": "EST.",
       "literal-158a323a7ba44870": "2026",
       "literal-57c566a66a0ebbf4": "RT ",
@@ -222,14 +222,14 @@
       "literal-a9a59b72f690a630": "Chiria ta lunară",
       "literal-1c3a9bfde9fabeff": "Ваша ежемесячная аренда",
       "literal-b4db5f306825ae61": "Your monthly rental",
-      "literal-9882686a75fa8d6c": "Ce primești",
-      "literal-f1cfb2b145a7be01": "Что входит",
-      "literal-06cec1523c69f02c": "What is included",
       "literal-588da410532073f8": " · ",
       "literal-d3150495ce4f5d1a": " - ",
       "literal-fa4bd2bb877cb496": "Cumpără în rate la",
       "literal-7c562ae69ba6c7dd": "Купить в рассрочку от",
-      "literal-86de4377c6aa39bf": "Buy in installments from"
+      "literal-86de4377c6aa39bf": "Buy in installments from",
+      "literal-9882686a75fa8d6c": "Ce primești",
+      "literal-f1cfb2b145a7be01": "Что входит",
+      "literal-06cec1523c69f02c": "What is included"
     },
     "label": "Acasă · elemente vizuale și interfață"
   },
@@ -755,7 +755,9 @@
       "26.0": "Универсальная система онлайн-записи для услуг, команд и доступности, автоматически адаптируемая под каждую компанию",
       "26.1": "A universal booking system for services, teams and availability, automatically customized for each company",
       "34.0": "Мультитенантная операционная платформа для автосервисов: записи, работы, клиенты, склад, партнёры и отчёты в одной системе",
-      "34.1": "A multi-tenant operations platform for automotive service companies, combining appointments, work orders, customers, inventory, partners and reporting"
+      "34.1": "A multi-tenant operations platform for automotive service companies, combining appointments, work orders, customers, inventory, partners and reporting",
+      "77.0": "Сайт аренды аудиооборудования и генераторов с каталогом, тарифами и бронированием",
+      "77.1": "An audio equipment and generator rental website with a catalog, rates and bookings"
     },
     "label": "Catalog · descrieri în rusă și engleză"
   },
@@ -2260,6 +2262,21 @@
     "label": "Fișa din catalog · MOLDOVA ESCAPE"
   },
   {
+    "id": "text-project-77",
+    "site": "monodev-catalog",
+    "source": "app/lib/project-catalog.ts",
+    "fields": {
+      "title": "MONORENT",
+      "desc": "Website pentru închirierea echipamentelor audio și generatoarelor, cu catalog, tarife și rezervări",
+      "stack.0": "Next.js",
+      "stack.1": "React",
+      "stack.2": "Catalog echipamente",
+      "stack.3": "Rezervări",
+      "stack.4": "Responsive Design"
+    },
+    "label": "Fișa din catalog · MONORENT"
+  },
+  {
     "id": "text-project-54",
     "site": "monodev-catalog",
     "source": "app/lib/project-catalog.ts",
@@ -2679,7 +2696,7 @@
     "source": "app/brand-logo.tsx",
     "fields": {
       "literal-d7de34b17b4691aa": "mono",
-      "literal-938b99e3330802a9": "/dev"
+      "literal-938b99e3330802a9": "dev"
     },
     "label": "Identitate · logo"
   },
@@ -4443,7 +4460,13 @@
       "34.sections.3.title": "Tehnologie și livrare",
       "34.sections.3.items.0": "Next.js, NestJS, TypeScript, Prisma și PostgreSQL",
       "34.sections.3.items.1": "Aplicație responsive/PWA și API documentat",
-      "34.sections.3.items.2": "Infrastructură Docker, seed demonstrativ și suită de teste"
+      "34.sections.3.items.2": "Infrastructură Docker, seed demonstrativ și suită de teste",
+      "77.summary": "MONORENT prezintă echipamente audio și generatoare disponibile pentru închiriere, cu pagini de produs, tarife pe durată și acces la rezervare.",
+      "77.sections.0.title": "Catalog și rezervări",
+      "77.sections.0.items.0": "Echipamente audio și generatoare",
+      "77.sections.0.items.1": "Pagini de produs cu imagini și specificații",
+      "77.sections.0.items.2": "Tarife pentru 12 și 24 de ore",
+      "77.sections.0.items.3": "Selectarea echipamentului și duratei pentru rezervare"
     },
     "label": "Proiecte · descrieri în română · projectDetails"
   },

@@ -4,6 +4,26 @@ import { readFileSync } from "node:fs";
 import { loadSiteModule } from "../scripts/load-site-data.mjs";
 const cms = loadSiteModule("app/lib/cms-store.ts");
 const catalog = loadSiteModule("app/lib/project-catalog.ts");
+test("decimal discounts accept comma and preserve a directly entered reduced price", () => {
+  const discount = loadSiteModule("app/admin/discount-values.ts");
+  assert.equal(discount.parseDiscountNumber("44,1"), 44.1);
+  assert.equal(discount.parseDiscountNumber("44.1"), 44.1);
+  assert.ok(Number.isNaN(discount.parseDiscountNumber("")));
+  assert.equal(discount.discountedPrice(1000, 44.1), 559);
+  assert.equal(discount.discountedPrice(999, 44.1), 558.44);
+  assert.equal(discount.discountedPrice(950, (1 - 531.05 / 950) * 100), 531.05);
+});
+test("sold status defaults to available and can be reversed without affecting prices", () => {
+  cms.publishCms({});
+  assert.equal(cms.projectSold(14), false);
+  for (const [value, expected] of [["true", true], ["false", false], ["yes", false]]) {
+    cms.publishCms({ "text-project-status-14": { revision: 1, values: { sold: value } } });
+    assert.equal(cms.projectSold(14), expected);
+    assert.equal(cms.projectSold(15), false);
+    assert.equal(cms.projectPrice(14, 900).standard, 900);
+  }
+  cms.publishCms({});
+});
 test("price validation rejects invalid discounts, blanks, negative and non-finite prices", () => {
   for (const p of [
     { standard: -1, discounted: null, enabled: false },

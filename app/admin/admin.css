@@ -1958,3 +1958,14 @@
 .admin-page button {
   font-family: inherit;
 }
+.admin-project-status{margin:12px 0 16px}
+.admin-project-status>button{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px!important;border:1px solid #e3ddec!important;border-radius:12px!important;background:#f7f5fb!important;text-align:left;color:var(--admin-ink)!important;cursor:pointer}
+.admin-project-status>button.is-sold{border-color:#c7b9ee!important;background:#f0ebfa!important;color:var(--admin-accent)!important}
+.admin-project-status>button:focus-visible{outline:2px solid var(--admin-accent);outline-offset:3px}
+.admin-project-status>button:disabled{opacity:.6;cursor:wait}
+.admin-status-indicator{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.admin-project-status strong{display:block;font-size:12px}.admin-project-status small{display:block;margin-top:4px;color:var(--admin-muted);font-size:10px}
+.admin-status-switch{margin-left:auto;width:30px;height:18px;border-radius:20px;background:#e3ddec;padding:3px;flex-shrink:0}
+.admin-status-switch:before{content:"";display:block;width:12px;height:12px;border-radius:50%;background:#aaa;transition:transform .2s}
+.is-sold .admin-status-switch{background:#dcd1f5}.is-sold .admin-status-switch:before{background:var(--admin-accent);transform:translateX(12px)}
+.admin-project-status p{font-size:11px;color:#b13b50;margin-top:8px}

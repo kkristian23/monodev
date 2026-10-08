@@ -4,6 +4,12 @@
 .rail-language-options a>span:last-child{position:relative;z-index:2}.rail-language-options a:hover{color:#f4f1fa;transform:translateY(-1px)}.rail-language-options a.active{color:#10110e;text-shadow:0 1px #fff8}.rail-language-options a:focus-visible{outline:2px solid #cbff36;outline-offset:2px}
 .project-page-link{display:inline-flex;gap:8px;align-items:center;margin:0 25px 16px;color:var(--ink);font-size:13px;font-weight:650;text-decoration:underline;text-underline-offset:4px}
 #project-grid .card{position:relative}
+.project-sold-visual{position:relative;isolation:isolate}
+.project-sold-visual:after{content:"";position:absolute;inset:0;z-index:1;background:#10120f66;pointer-events:none;border-radius:inherit}
+.project-sold-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:20px 30px;max-width:calc(100% - 32px);border:1px solid #e4ff9a;border-radius:12px;background:#cbff36;color:#171d0b;box-shadow:0 12px 40px #0006,0 0 0 6px #cbff361a;font:800 clamp(20px,2.2vw,30px)/1.1 var(--font-mono);letter-spacing:3px;text-transform:uppercase;white-space:nowrap;pointer-events:none}
+.project-sold-caption{display:inline-flex;align-items:center;gap:10px;color:var(--ink);font:700 12px var(--font-mono);letter-spacing:1.4px;text-transform:uppercase}
+.project-purchase .project-sold-caption,.modal-price .project-sold-caption{color:#cbff36}
+.card-sold .visual{filter:saturate(.7)}
 .project-preview-trigger{position:absolute;inset:0;z-index:3;border:0;border-radius:inherit;background:transparent;cursor:pointer}
 .project-preview-trigger:focus-visible{outline:3px solid var(--violet);outline-offset:4px}
 #project-grid .project-page-link{position:relative;z-index:4}

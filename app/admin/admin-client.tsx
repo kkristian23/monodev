@@ -43,6 +43,8 @@ import {
 } from "./repository";
 import registry from "./content-registry.json";
 import "./admin.css";
+import { parseDiscountNumber, discountedPrice } from "./discount-values";
+import { ProjectStatusControl } from "./project-status-control";
 import { PaymentItemsEditor } from "./payment-items-editor";
 
 type Section = "text" | "media" | "price" | "discount" | "payment";
@@ -176,10 +178,8 @@ function adminLocation() {
   };
   const priceMin = validPriceRangeValue(params.get("priceMin"));
   const priceMax = validPriceRangeValue(params.get("priceMax"));
-  const requestedDiscountPercent = Number(params.get("discountPercent"));
-  const discountPercent = discountPercentages.includes(
-    requestedDiscountPercent as (typeof discountPercentages)[number],
-  )
+  const requestedDiscountPercent = parseDiscountNumber(params.get("discountPercent"));
+  const discountPercent = Number.isFinite(requestedDiscountPercent) && requestedDiscountPercent > 0 && requestedDiscountPercent < 100
     ? requestedDiscountPercent
     : 10;
   const requestedDiscountStatus = params.get("discountStatus");
@@ -470,7 +470,7 @@ export default function Admin() {
   );
   const [discountProjectIds, setDiscountProjectIds] = useState<number[]>([]);
   const [discountOverrides, setDiscountOverrides] = useState<
-    Record<number, OptionalNumber>
+    Record<number, number | string>
   >({});
   const [discountPrices, setDiscountPrices] = useState<Record<number, SavedPrice>>(
     {},
@@ -610,7 +610,7 @@ export default function Admin() {
     const standard = Math.floor(saved?.standard ?? project.price);
     return (
       section === "discount" && saved?.enabled && saved.discounted !== null
-        ? Math.floor(saved.discounted)
+        ? saved.discounted
         : standard
     );
   };
@@ -817,16 +817,14 @@ export default function Admin() {
     discountOverrides[projectId] ?? discountPercent;
   const validProjectDiscountPercent = (projectId: number) => {
     const percent = projectDiscountPercent(projectId);
-    return typeof percent === "number" ? percent : Number.NaN;
+    return parseDiscountNumber(percent);
   };
   const discountTotals = catalog.reduce(
     (totals, project) => {
       const standard = Math.floor(discountPrices[project.id]?.standard ?? project.price);
       const percent = validProjectDiscountPercent(project.id);
       const final = selectedDiscounts.has(project.id) && Number.isFinite(percent)
-        ? Math.floor(
-            (standard * (100 - percent)) / 100,
-          )
+        ? discountedPrice(standard, percent)
         : standard;
       totals.standard += standard;
       totals.final += final;
@@ -949,7 +947,7 @@ export default function Admin() {
             .map((project) => project.id);
           const first = prices[selected[0]];
           const currentPercent = first?.discounted
-            ? Math.round((1 - first.discounted / first.standard) * 100)
+            ? (1 - first.discounted / first.standard) * 100
             : 10;
           const basePercent = discountPercentages.includes(
             currentPercent as (typeof discountPercentages)[number],
@@ -960,16 +958,14 @@ export default function Admin() {
             selected.flatMap((projectId) => {
               const savedPrice = prices[projectId];
               if (!savedPrice?.discounted || savedPrice.standard <= 0) return [];
-              const percent = Math.round(
-                (1 - savedPrice.discounted / savedPrice.standard) * 100,
-              );
+              const percent = (1 - savedPrice.discounted / savedPrice.standard) * 100;
               return percent === basePercent ? [] : [[projectId, percent]];
             }),
           );
           const draft = readAdminDraft<{
             discountProjectIds: number[];
             discountPercent: number;
-            discountOverrides: Record<number, OptionalNumber>;
+            discountOverrides: Record<number, number | string>;
           }>(section, selection);
           const linkedPercent = new URL(window.location.href).searchParams.has(
             "discountPercent",
@@ -1334,12 +1330,12 @@ export default function Admin() {
           const enabled = selected.has(project.id);
           const standard = Math.floor(current.standard);
           const percent = validProjectDiscountPercent(project.id);
-          if (enabled && (!Number.isInteger(percent) || percent < 1 || percent > 99))
+          if (enabled && (!Number.isFinite(percent) || percent <= 0 || percent >= 100))
             throw new Error(
-              `${project.title}: reducerea trebuie să fie un procent întreg între 1% și 99%.`,
+              `${project.title}: reducerea trebuie să fie mai mare de 0% și mai mică de 100%.`,
             );
           const discounted = enabled
-            ? Math.floor((standard * (100 - percent)) / 100)
+            ? discountedPrice(standard, percent)
             : null;
           const value: Price = {
             standard,
@@ -1545,7 +1541,7 @@ export default function Admin() {
       const stored = draft.value as {
         discountProjectIds?: number[];
         discountPercent?: number;
-        discountOverrides?: Record<number, OptionalNumber>;
+        discountOverrides?: Record<number, number | string>;
       };
       const selected = new Set(stored.discountProjectIds ?? []);
       const entries = catalog
@@ -1553,18 +1549,18 @@ export default function Admin() {
         .map((project) => {
           const current = prices[project.id];
           const enabled = selected.has(project.id);
-          const percent = stored.discountOverrides?.[project.id] ?? stored.discountPercent;
+          const percent = parseDiscountNumber(stored.discountOverrides?.[project.id] ?? stored.discountPercent);
           const validPercent =
             typeof percent === "number" &&
-            Number.isInteger(percent) &&
-            percent >= 1 &&
-            percent <= 99;
+            Number.isFinite(percent) &&
+            percent > 0 &&
+            percent < 100;
           if (enabled && !validPercent)
-            throw new Error(`${project.title}: reducerea trebuie să fie un procent întreg între 1% și 99%.`);
+            throw new Error(`${project.title}: reducerea trebuie să fie mai mare de 0% și mai mică de 100%.`);
           const value: Price = {
             standard: Math.floor(current.standard),
             discounted: enabled
-              ? Math.floor((current.standard * (100 - Number(percent))) / 100)
+              ? discountedPrice(current.standard, percent)
               : null,
             enabled,
           };
@@ -2052,6 +2048,7 @@ export default function Admin() {
                               <div className="admin-price-card-heading">
                                 <strong title={project.title}>{project.title}</strong>
                               </div>
+                              <ProjectStatusControl id={project.id} title={project.title} />
                               <label>
                                 <span className="admin-price-field-heading">
                                   <span>Preț original</span>
@@ -2155,20 +2152,9 @@ export default function Admin() {
                         </label>
                         <label className="admin-discount-percent">
                           Reducere implicită
-                          <select
-                            aria-label="Procentul reducerii"
-                            value={discountPercent}
-                            onChange={(event) => {
-                              setDiscountPercent(Number(event.target.value));
-                              setDirty(true);
-                            }}
-                          >
-                            {discountPercentages.map((percent) => (
-                              <option key={percent} value={percent}>
-                                {percent}%
-                              </option>
-                            ))}
-                          </select>
+                          <input type="number" min="0.01" max="99.99" step="any"
+                            aria-label="Procentul reducerii" value={discountPercent}
+                            onChange={(event) => { setDiscountPercent(Number(event.target.value)); setDirty(true); }} />
                         </label>
                         {priceRangeFilter("Preț redus")}
                       </section>
@@ -2255,10 +2241,8 @@ export default function Admin() {
                           );
                           const percent = projectDiscountPercent(project.id);
                           const numericPercent =
-                            typeof percent === "number" ? percent : Number.NaN;
-                          const reduced = Math.floor(
-                            (standard * (100 - numericPercent)) / 100,
-                          );
+                            parseDiscountNumber(percent);
+                          const reduced = discountedPrice(standard, numericPercent);
                           const saving = standard - reduced;
                           const isSelected = selectedDiscounts.has(project.id);
                           return (
@@ -2303,7 +2287,7 @@ export default function Admin() {
                                 />
                                 <strong>{project.title}</strong>
                                 <span className="admin-discount-state">
-                                  {isSelected ? `${percent}% activă` : "Fără reducere"}
+                                  {isSelected ? `${Number.isFinite(numericPercent) ? Number(numericPercent.toFixed(4)) : percent}% activă` : "Fără reducere"}
                                 </span>
                               </label>
                               <div className="admin-discount-price-flow">
@@ -2318,23 +2302,31 @@ export default function Admin() {
                                   )
                                   : "Introdu procentul reducerii."}
                               </div>
+                              {isSelected && <label className="admin-custom-discount">
+                                Pre? redus (?)
+                                <span><input type="number" inputMode="decimal" min="0.01" max={standard - 0.01} step="0.01"
+                                  aria-label={`Pre? redus pentru ${project.title}`}
+                                  value={Number.isFinite(reduced) ? reduced : ""}
+                                  onChange={(event) => {
+                                    const price = parseDiscountNumber(event.target.value);
+                                    setDiscountOverrides(current => ({ ...current, [project.id]: Number.isFinite(price) ? (1 - price / standard) * 100 : "" }));
+                                    setDirty(true);
+                                  }} /></span>
+                              </label>}
                               {isSelected && (
                                 <label className="admin-custom-discount">
                                   Reducere individuală (%)
                                   <span>
                                     <input
-                                      type="number"
-                                      min="1"
-                                      max="99"
-                                      step="1"
+                                      type="text"
+                                      inputMode="decimal"
+                                      placeholder="Ex. 44,1"
                                       aria-label={`Reducere individuală pentru ${project.title}`}
                                       value={percent}
                                       onChange={(event) => {
                                         setDiscountOverrides((current) => ({
                                           ...current,
-                                          [project.id]: event.target.value === ""
-                                            ? ""
-                                            : Number(event.target.value),
+                                          [project.id]: event.target.value,
                                         }));
                                         setDirty(true);
                                       }}

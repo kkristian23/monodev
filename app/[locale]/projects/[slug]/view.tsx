@@ -1,7 +1,7 @@
 "use client";
 import { CatalogPrice } from "../../../components/catalog-price";
 import { CmsMedia } from "../../../components/cms-media";
-import { cmsContent, cmsText, paymentSettings } from "../../../lib/cms-store";
+import { cmsContent, cmsText, paymentSettings, projectSold, soldLabels } from "../../../lib/cms-store";
 import { useCms } from "../../../components/cms-live";
 
 import { SeoShell } from "../../../components/seo-shell";
@@ -62,12 +62,12 @@ export default function ProjectView({ locale, slug }: { locale: Locale; slug: st
         <section><h2>{c.problem}</h2><p>{c.guidance}</p><a className="project-action" href={project.demo} data-analytics-event="demo_open" data-project={project.slug}>{c.demo} {cmsText("view-projects-slug", "literal-3b2e8119b6fcc97d", " — ")}{project.title}</a></section>
         <section><h2>{c.services}</h2><div className="project-service-links"><a href={localePath(locale, `services/${categoryServiceSlugs[project.type] ?? "business-websites"}`)}>{project.category}</a><a href={localePath(locale, "services/website-customization")}>{c.customize}</a><a href={localePath(locale, "services/launch-ready-websites")}>{c.ready}</a><a href={localePath(locale, "intrebari")}>{c.faq}</a><a href={localePath(locale, "contact")}>{c.contact}</a></div></section>
       </article>
-      <aside className="project-purchase" aria-label={c.price}>
+      {projectSold(project.id) ? <aside className="project-purchase"><span className="project-sold-caption">{soldLabels[locale]} ✓</span><h2>{project.title}</h2><a href={project.demo}>{c.demo}</a></aside> : <aside className="project-purchase" aria-label={c.price}>
         <h2>{c.price}</h2><strong><CatalogPrice id={project.id} fallback={project.price} /></strong><small>{c.available} {cmsText("view-projects-slug", "literal-e800ff635b30dc76", " · EUR")}</small>
         <a href={contact("purchase")} data-analytics-event="project_request" data-project={project.slug}>{c.purchase}</a>
         <h3>{c.installments}</h3><table className="project-payment-table"><thead><tr><th scope="col">{c.months}</th><th scope="col">{c.monthly}</th><th scope="col">{c.total}</th></tr></thead><tbody>{plans.map(plan => { const total = installmentTotalPrice(project.price, plan.surcharge); return <tr key={plan.months}><th scope="row"><a className="project-secondary" href={contact(`installments-${plan.months}-months`)} data-analytics-event="payment_option" data-project={project.slug} data-option={`installments-${plan.months}-months`}>{plan.months}</a></th><td>{cmsText("view-projects-slug", "literal-c4cc90ed3d26f12d", "€")}{formatMonthlyPrice(installmentMonthlyPrice(project.price, plan))}</td><td>{cmsText("view-projects-slug", "literal-c4cc90ed3d26f12d", "€")}{total}</td></tr>; })}</tbody></table>
         <h3>{c.rent}</h3><p>{cmsText("view-projects-slug", "literal-c4cc90ed3d26f12d", "€")}{formatMonthlyPrice(monthlyRentalPrice(project.price))} {cmsText("view-projects-slug", "literal-005e1574a2b5c816", " / ")}{locale === "ro" ? cmsText("view-projects-slug", "literal-d446576ad92d9d78", "lună") : locale === "ru" ? cmsText("view-projects-slug", "literal-e8926ec2b8684a99", "месяц") : cmsText("view-additional", "literal-a5c7d1719e284f2c", "month")}</p><small>{locale === "ro" ? `Perioada contractului: ${paymentTerms.rentalMonths} luni.` : locale === "ru" ? `Срок договора: ${paymentTerms.rentalMonths} мес.` : `Contract term: ${paymentTerms.rentalMonths} months.`}</small><small>{c.rentalDetails}</small><a className="project-secondary" href={contact("site-rental")} data-analytics-event="payment_option" data-project={project.slug} data-option="site-rental">{c.discussRental}</a><small>{c.terms}</small>
-      </aside>
+      </aside>}
     </div>
     <section className="project-content"><h2>{c.related}</h2><div className="project-related">{related.map(candidate => <article key={candidate.id}><h3><a href={projectHref(locale, candidate.id)} data-analytics-event="project_open" data-project={candidate.slug}>{candidate.title}</a></h3><p>{candidate.description}</p><p><CatalogPrice id={candidate.id} fallback={candidate.price} /></p></article>)}</div></section>
     {schema && <JsonLd data={schema} />}

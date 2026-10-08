@@ -1,5 +1,6 @@
 // Real local demo screenshots. Dimensions are read from the captured assets.
 export const projectImages: Record<string, { src: string; width: number; height: number }> = {
+  "monorent": { src: "/project-previews/monorent.png", width: 1440, height: 1080 },
   "serviceflow-pro": { src: "/project-previews/serviceflow-pro.webp", width: 1440, height: 1080 },
   "vatra-market": { src: "/project-previews/vatra-market.webp", width: 1440, height: 1080 },
   "codru-escapes": { src: "/project-previews/codru-escapes.webp", width: 1440, height: 1080 },

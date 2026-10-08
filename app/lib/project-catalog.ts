@@ -41,6 +41,16 @@ export const annualInstallmentPrice = (price: number) => {
 };
 
 export const projectCatalog: Project[] = [
+  {
+    id: 77,
+    seoEnabled: false,
+    title: "MONORENT",
+    type: "Equipment Rental",
+    price: 800,
+    tone: "monorent",
+    desc: "Website pentru închirierea echipamentelor audio și generatoarelor, cu catalog, tarife și rezervări",
+    stack: ["Next.js", "React", "Catalog echipamente", "Rezervări", "Responsive Design"],
+  },
   { id: 73, seoEnabled: false, title: "ServiceFlow Pro", type: "Service Management", price: 1100, tone: "serviceflow-pro", desc: "Renovări și mentenanță: estimări, cereri de ofertă, programări și urmărirea lucrărilor.", stack: ["Next.js", "TypeScript", "Firebase Auth", "Cloud Firestore", "PDF", "RO / RU / EN"] },
   { id: 74, seoEnabled: false, title: "Vatra Market", type: "Marketplace", price: 1000, tone: "vatra-market", desc: "Marketplace pentru producători locali: produse, stocuri, comenzi și panou pentru vânzători.", stack: ["Next.js", "TypeScript", "Firebase Auth", "Cloud Firestore", "Firebase Storage", "RO / RU / EN"] },
   { id: 75, seoEnabled: false, title: "Codru Escapes", type: "Hotels & Travel", price: 1200, tone: "codru-escapes", desc: "Cazări și experiențe în Moldova: disponibilitate, rezervări și administrare pentru proprietari.", stack: ["Next.js", "TypeScript", "Firebase Auth", "Cloud Firestore", "Leaflet", "RO / RU / EN"] },
@@ -865,6 +875,7 @@ export const hiddenCategories = new Set(["AI Website Factory"]);
 export const unavailableProjectIds = new Set<number>();
 
 export const projectSlugs: Record<number, string> = {
+  77: "monorent",
   73: "serviceflow-pro",
   74: "vatra-market",
   75: "codru-escapes",
@@ -937,6 +948,7 @@ export const projectSlugs: Record<number, string> = {
 };
 
 export const projectPaths: Record<number, string> = {
+  77: "https://monorent.md/",
   73: "/serviceflow-pro/",
   74: "/vatra-market/",
   75: "/codru-escapes/",
@@ -999,7 +1011,7 @@ export const projectPaths: Record<number, string> = {
   17: "/archicontract/",
   16: "/atelier-noire/",
   15: "/market9000/",
-  14: "/neobarberclub/",
+  14: "https://neoclub.md/",
   12: "/rentech/",
   11: "/elan/",
   10: "/fixora/",
@@ -1018,6 +1030,13 @@ export const projectDetails: Record<
     sections: Array<{ title: string; items: string[] }>;
   }
 > = cmsContent("project-catalog-projectDetails", {
+  77: {
+    summary: "MONORENT prezintă echipamente audio și generatoare disponibile pentru închiriere, cu pagini de produs, tarife pe durată și acces la rezervare.",
+    demo: "https://monorent.md/",
+    sections: [
+      { title: "Catalog și rezervări", items: ["Echipamente audio și generatoare", "Pagini de produs cu imagini și specificații", "Tarife pentru 12 și 24 de ore", "Selectarea echipamentului și duratei pentru rezervare"] },
+    ],
+  },
   34: {
     summary: "AUTOFLOW PARTNER este un sistem complet de operare pentru service-uri și companii de servicii auto. Platforma unește planificarea, execuția lucrărilor, relația cu clienții, stocul și indicatorii de management într-un workspace multi-tenant.",
     sections: [

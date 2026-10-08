@@ -1,7 +1,7 @@
 "use client";
 import { CatalogPrice } from "./components/catalog-price";
 import { CmsMedia } from "./components/cms-media";
-import { paymentSettings, projectPrice, slotImages } from "./lib/cms-store";
+import { paymentSettings, projectPrice, projectSold, soldLabels, slotImages } from "./lib/cms-store";
 import { projectCardImages } from "./lib/project-card-images";
 import { siteConfig } from "./lib/site-config";
 import { cmsContent, cmsText } from "./lib/cms-store";
@@ -497,7 +497,7 @@ function ProjectVisual({
         <>
           <div className="neo-mark">
             <b>{cmsText("home-client", "literal-1a259dba25660062", "NEO")}</b>
-            <span>{cmsText("home-client", "literal-17ab25fce35797b2", "BARBER CLUB")}</span>
+            <span>{cmsText("home-client", "literal-17ab25fce35797b2", "BARBE CLUB")}</span>
           </div>
           <div className="neo-blade">
             <i />
@@ -1616,7 +1616,7 @@ export default function Home({ initialLocale = "ro" }: { initialLocale?: Locale 
               <motion.article
                 layout
                 key={project.id}
-                className="card"
+                className={`card${projectSold(project.id) ? " card-sold" : ""}`}
                 initial={false}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
@@ -1629,7 +1629,10 @@ export default function Home({ initialLocale = "ro" }: { initialLocale?: Locale 
                   data-analytics-event="project_open" data-project={projectSlugs[project.id]}
                   onClick={() => openProject(project)}
                 ><span className="sr-only" id={`project-preview-label-${project.id}`}>{c.viewDetails}</span></button>
-                <ProjectVisual project={project} locale={locale} />
+                {projectSold(project.id) ? <div className="project-sold-visual">
+                  <ProjectVisual project={project} locale={locale} />
+                  <span className="project-sold-badge">{soldLabels[locale]}</span>
+                </div> : <ProjectVisual project={project} locale={locale} />}
                 <div className="card-info">
                   <div>
                     <span className="type">
@@ -1638,7 +1641,7 @@ export default function Home({ initialLocale = "ro" }: { initialLocale?: Locale 
                     <h3 id={`project-card-title-${project.id}`}>{project.title}</h3>
                     <p>{localDescription(project.id, project.desc, locale)}</p>
                   </div>
-                  <div className="price">
+                  {!projectSold(project.id) && <div className="price">
                     <span className="price-sale">
                       <small>{c.from}</small>
                       <strong className="price-main"><CatalogPrice id={project.id} fallback={project.price} /></strong>
@@ -1652,7 +1655,7 @@ export default function Home({ initialLocale = "ro" }: { initialLocale?: Locale 
                     >
                       <b>{cmsText("home-client", "literal-c4cc90ed3d26f12d", "€")}{annualInstallmentPrice(project.price)}<em>{c.perMonth}</em></b>
                     </span>
-                  </div>
+                  </div>}
                 </div>
                 <div className="tags">
                   {project.stack.map((x) => (
@@ -1833,15 +1836,15 @@ export default function Home({ initialLocale = "ro" }: { initialLocale?: Locale 
               <div className="modal-content">
                 <div className="modal-toolbar">
                   <span className="kicker">{localType(selected.type, locale)}</span>
-                  <span className="modal-status"><i />{c.from}</span>
+                  <span className="modal-status"><i />{projectSold(selected.id) ? soldLabels[locale] : c.from}</span>
                 </div>
                 <div className="modal-title-row">
                   <AutoFitProjectTitle title={selected.title} />
                   <div className="modal-price">
-                    <small>{c.fullPrice}</small><CatalogPrice id={selected.id} fallback={selected.price} />
+                    {projectSold(selected.id) ? <span className="project-sold-caption">{soldLabels[locale]} <Check size={15} /></span> : <><small>{c.fullPrice}</small><CatalogPrice id={selected.id} fallback={selected.price} /></>}
                   </div>
                 </div>
-                <aside className="rental-offer" aria-label={c.rentalLabel}>
+                {!projectSold(selected.id) && <aside className="rental-offer" aria-label={c.rentalLabel}>
                   <div className="installment-side">
                     <div className="installment-heading">
                       <span>{locale === "ro" ? cmsText("home-client", "literal-96d1efc56ea963cc", "ALEGE MODALITATEA") : locale === "ru" ? cmsText("home-client", "literal-0011a9ac8a2cc27f", "ВЫБЕРИТЕ ВАРИАНТ") : cmsText("home-client", "literal-04b1babe45f79801", "CHOOSE YOUR OPTION")}</span>
@@ -1897,7 +1900,7 @@ export default function Home({ initialLocale = "ro" }: { initialLocale?: Locale 
                       ))}
                     </ul>
                   </div>}
-                </aside>
+                </aside>}
                 <div className="modal-actions">
                   {unavailableProjectIds.has(selected.id) ? (
                     <button
@@ -1932,12 +1935,12 @@ export default function Home({ initialLocale = "ro" }: { initialLocale?: Locale 
                     <span>{c.viewDetails} {cmsText("home-client", "literal-d3150495ce4f5d1a", " - ")}{selected.title}</span>
                     <ArrowRight aria-hidden="true" />
                   </a>
-                  <a className="buy-link" href={`${contactHref}?${new URLSearchParams({ project: selected.title, option: "purchase" })}`} data-analytics-event="project_request" data-project={projectSlugs[selected.id]}>
+                  {!projectSold(selected.id) && <a className="buy-link" href={`${contactHref}?${new URLSearchParams({ project: selected.title, option: "purchase" })}`} data-analytics-event="project_request" data-project={projectSlugs[selected.id]}>
                     {c.buyFor} <CatalogPrice id={selected.id} fallback={selected.price} hideOriginal /> <ArrowRight />
-                  </a>
-                  <a className="rent-link" href={paymentHref} data-analytics-event="payment_option" data-project={projectSlugs[selected.id]} data-option={paymentMode}>
+                  </a>}
+                  {!projectSold(selected.id) && <a className="rent-link" href={paymentHref} data-analytics-event="payment_option" data-project={projectSlugs[selected.id]} data-option={paymentMode}>
                     <span>{paymentMode === "installments" ? `${locale === "ro" ? cmsText("home-client", "literal-fa4bd2bb877cb496", "Cumpără în rate la") : locale === "ru" ? cmsText("home-client", "literal-7c562ae69ba6c7dd", "Купить в рассрочку от") : cmsText("home-client", "literal-86de4377c6aa39bf", "Buy in installments from")} €${installmentPriceLabel}` : `${c.rentFor} ${rentalMonthlyPriceLabel}`}<small>{c.perMonth}</small></span> <ArrowRight />
-                  </a>
+                  </a>}
                 </div>
                 <p className="modal-summary">{selectedDetail.summary}</p>
                 <div className="detail-sections" aria-label={locale === "ro" ? cmsText("home-client", "literal-9882686a75fa8d6c", "Ce primești") : locale === "ru" ? cmsText("home-client", "literal-f1cfb2b145a7be01", "Что входит") : cmsText("home-client", "literal-06cec1523c69f02c", "What is included")}>

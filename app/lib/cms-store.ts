@@ -65,6 +65,10 @@ export function cmsText(group: string, key: string, fallback: string): string {
   const value = snapshot[`text-${group}`]?.values?.[key];
   return typeof value === "string" && value.length <= 20000 ? value : fallback;
 }
+export function projectSold(id: number): boolean {
+  return snapshot[`text-project-status-${id}`]?.values?.sold === "true";
+}
+export const soldLabels = { ro: "Vândut", ru: "Продано", en: "Sold" };
 const finiteSetting = (
   value: string | undefined,
   fallback: number,

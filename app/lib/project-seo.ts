@@ -1,5 +1,5 @@
 import type { getProject } from "./project-catalog";
-import { cmsContent } from "./cms-store";
+import { cmsContent, projectSold } from "./cms-store";
 import { absoluteUrl, localePath, pageMetadata, siteConfig, type Locale } from "./site-config";
 
 type LocalizedProject = NonNullable<ReturnType<typeof getProject>>;
@@ -30,5 +30,5 @@ export function projectMetadata(locale: Locale, project: LocalizedProject) {
 export function projectStructuredData(locale: Locale, project: LocalizedProject) {
   if (!isProjectSeoEnabled(project)) return null;
   const url = absoluteUrl(localePath(locale, `projects/${project.slug}`));
-  return { "@context": "https://schema.org", "@type": "Product", "@id": `${url}#product`, name: projectTitle(project, locale), description: project.detail.summary, sku: `MONODEV-${project.id}`, category: project.category, url, ...(project.image ? { image: absoluteUrl(project.image.src) } : {}), brand: { "@type": "Brand", name: siteConfig.name }, offers: { "@type": "Offer", url, price: project.price, priceCurrency: project.currency, availability: "https://schema.org/InStock", seller: { "@id": `${siteConfig.url}/#organization` } } };
+  return { "@context": "https://schema.org", "@type": "Product", "@id": `${url}#product`, name: projectTitle(project, locale), description: project.detail.summary, sku: `MONODEV-${project.id}`, category: project.category, url, ...(project.image ? { image: absoluteUrl(project.image.src) } : {}), brand: { "@type": "Brand", name: siteConfig.name }, offers: { "@type": "Offer", url, price: project.price, priceCurrency: project.currency, availability: projectSold(project.id) ? "https://schema.org/SoldOut" : "https://schema.org/InStock", seller: { "@id": `${siteConfig.url}/#organization` } } };
 }
